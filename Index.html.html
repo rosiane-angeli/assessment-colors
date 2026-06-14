@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assessment de Perfil Comportamental</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f3;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+  .header p {
+    font-size: 15px;
+    color: #666;
+  }
+  .progress-bar-bg {
+    background: #e0e0e0;
+    border-radius: 99px;
+    height: 6px;
+    margin-bottom: 6px;
+  }
+  .progress-bar-fill {
+    height: 6px;
+    border-radius: 99px;
+    background: #534AB7;
+    transition: width 0.3s;
+  }
+  .progress-label {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 1.5rem;
+  }
+  .question-card {
+    background: #fff;
+    border: 1px solid #e8e8e6;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .question-number {
+    font-size: 11px;
+    color: #aaa;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .question-text {
+    font-size: 15px;
+    color: #1a1a1a;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  .options {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .opt-btn {
+    flex: 1;
+    min-width: 90px;
+    padding: 8px 6px;
+    font-size: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    line-height: 1.3;
+    font-family: inherit;
+  }
+  .opt-btn:hover { background: #f5f5f3; }
+  .opt-btn.sel-0 { background: #FCEBEB; border-color: #E24B4A; color: #791F1F; font-weight: 500; }
+  .opt-btn.sel-1 { background: #FAEEDA; border-color: #EF9F27; color: #633806; font-weight: 500; }
+  .opt-btn.sel-2 { background: #E6F1FB; border-color: #378ADD; color: #0C447C; font-weight: 500; }
+  .opt-btn.sel-3 { background: #EAF3DE; border-color: #639922; color: #27500A; font-weight: 500; }
+  .opt-btn.sel-4 { background: #EEEDFE; border-color: #7F77DD; color: #3C3489; font-weight: 500; }
+  .nav {
+    display: flex;
+    gap: 12px;
+    margin-top: 1.5rem;
+  }
+  .nav button {
+    flex: 1;
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #1a1a1a;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .nav button:hover { background: #f5f5f3; }
+  .nav button.primary {
+    background: #534AB7;
+    color: #fff;
+    border-color: #534AB7;
+  }
+  .nav button.primary:hover { background: #3C3489; }
+  .nav button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .unanswered-msg {
+    font-size: 13px;
+    color: #A32D2D;
+    margin-top: 8px;
+    display: none;
+    background: #FCEBEB;
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+  .result-section { display: none; }
+  .result-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .result-header h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+  .result-header p {
+    font-size: 14px;
+    color: #888;
+    margin-top: 6px;
+  }
+  .profile-bar-wrap { margin-bottom: 1rem; }
+  .profile-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: #1a1a1a;
+  }
+  .profile-label span:last-child { color: #888; }
+  .profile-bar-bg {
+    background: #e8e8e6;
+    border-radius: 99px;
+    height: 10px;
+  }
+  .profile-bar {
+    height: 10px;
+    border-radius: 99px;
+    transition: width 0.8s ease;
+  }
+  .dominant-card {
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+    border: 1px solid;
+  }
+  .dominant-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .dominant-desc {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .restart-btn {
+    display: block;
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #1a1a1a;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .restart-btn:hover { background: #f5f5f3; }
+  .share-section {
+    margin-top: 1.5rem;
+    background: #fff;
+    border: 1px solid #e8e8e6;
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .share-section p {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .share-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #534AB7;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .share-btn:hover { background: #3C3489; }
+  .badge {
+    display: inline-block;
+    background: #EEEDFE;
+    color: #3C3489;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  @media (max-width: 480px) {
+    .opt-btn { min-width: 70px; font-size: 11px; }
+    .header h1 { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div id="quiz-section">
+    <div class="header">
+      <div class="badge">Assessment Comportamental</div>
+      <h1>Qual é o seu perfil?</h1>
+      <p>Responda 60 frases e descubra o seu estilo predominante</p>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="prog" style="width:0%"></div>
+    </div>
+    <p class="progress-label" id="prog-label">0 de 60 respondidas</p>
+    <div id="questions-container"></div>
+    <p class="unanswered-msg" id="unanswered-msg">⚠️ Responda todas as questões desta página antes de continuar.</p>
+    <div class="nav">
+      <button id="btn-prev" onclick="changePage(-1)" disabled>← Anterior</button>
+      <button id="btn-next" class="primary" onclick="changePage(1)">Próxima →</button>
+    </div>
+  </div>
+
+  <div class="result-section" id="result-section">
+    <div class="result-header">
+      <div class="badge">Resultado</div>
+      <h2>Seu perfil comportamental</h2>
+      <p>Baseado nas suas 60 respostas</p>
+    </div>
+    <div id="bars-container"></div>
+    <div class="dominant-card" id="dominant-card">
+      <div class="dominant-title" id="dominant-title"></div>
+      <div class="dominant-desc" id="dominant-desc"></div>
+    </div>
+    <div class="share-section">
+      <p>Compartilhe este assessment com sua equipe</p>
+      <button class="share-btn" onclick="copyLink()">🔗 Copiar link</button>
+    </div>
+    <button class="restart-btn" onclick="restart()">↺ Refazer o assessment</button>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS_PER_PAGE = 10;
+
+const questions = [
+  {n:1,text:"Meu humor é instável. Ele varia de acordo com os acontecimentos e de como eu sinto o ambiente.",color:"Amarelo"},
+  {n:2,text:"Mudanças e improvisos podem me estressar, pois geralmente me aprofundo nos assuntos e planejo em detalhes como vou agir.",color:"Verde"},
+  {n:3,text:"Funciono melhor com apresentações objetivas, lógicas e estruturadas. Gosto de tratar com neutralidade um assunto por vez.",color:"Azul"},
+  {n:4,text:"Tenho um senso inato de continuidade e de respeito pelo passado. O contexto histórico é essencial para mim.",color:"Verde"},
+  {n:5,text:"Se me envolvo muito com uma tarefa, esqueço de mim por completo. Muitas vezes não percebo como estou me sentindo e acabo não percebendo as outras pessoas.",color:"Rosa"},
+  {n:6,text:"Tenho uma tendência natural a planejar e estruturar o que precisa ser feito. Organizo as ideias e planejo minhas tarefas antes de começá-las.",color:"Branco"},
+  {n:7,text:"Gosto de me aprofundar nos temas que me interessam. Mergulho nos dados e no contexto para construir grandes planos sistêmicos antes de partir para a ação.",color:"Verde"},
+  {n:8,text:"Prefiro trabalhar só, em vez de em equipes interativas, pois isso facilita meu raciocínio e a realização de um trabalho preciso e racional.",color:"Azul"},
+  {n:9,text:"Não gosto de me expor em público. Em reuniões, geralmente sou mais ouvinte e faço contribuições pontuais.",color:"Verde"},
+  {n:10,text:"Tenho temperamento bem estável. Não sou de demonstrações emocionais ou impulsivas. Quando um dos meus valores é quebrado, prefiro me afastar.",color:"Azul"},
+  {n:11,text:"Quando me sinto bem emocionalmente, tenho a tendência de organizar minhas tarefas e processos.",color:"Amarelo"},
+  {n:12,text:"Me movo por desafios. Inovar e mudar é natural e necessário para mim. Sem isso, sinto tédio e desmotivação.",color:"Rosa"},
+  {n:13,text:"Não sou de falar muito, mas quando falo, escolho cuidadosamente as palavras para que minha comunicação seja clara, precisa e concisa.",color:"Azul"},
+  {n:14,text:"Gosto de participar de processos interativos, de compartilhamento e criação de ideias em grupo.",color:"Rosa"},
+  {n:15,text:"Tendo a não confiar nas pessoas até que haja um histórico de cumprimento de promessas e demonstrações suficientes de competência.",color:"Branco"},
+  {n:16,text:"Eu costumo fazer descrições dramáticas de minhas experiências pessoais.",color:"Amarelo"},
+  {n:17,text:"Sinto-me desconfortável sempre que um planejamento previamente aprovado não está sendo seguido.",color:"Branco"},
+  {n:18,text:"Para mim, é importante estabelecer e manter visões de longo prazo. Eu me sinto como guardião(ã) dessa visão.",color:"Azul"},
+  {n:19,text:"Quando me insiro em um projeto, preciso entender o todo para melhor desenvolver a parte que me cabe.",color:"Verde"},
+  {n:20,text:"Tenho uma grande capacidade de isenção, desprendimento e perspectiva, e sou imparcial por natureza.",color:"Azul"},
+  {n:21,text:"Quando me comunico, gosto de expor a informação inteira sem ser interrompido. Meu ritmo é estável e procuro ser preciso nas minhas colocações.",color:"Branco"},
+  {n:22,text:"Tenho muita empatia pelas pessoas, consigo sentir ou intuir os sentimentos dos outros. É quase como se o sentimento do outro fosse meu.",color:"Amarelo"},
+  {n:23,text:"Quando trabalho com prazo estabelecido, não gosto de ser questionado sobre etapas já concluídas. Prefiro que as pessoas esperem a data combinada.",color:"Verde"},
+  {n:24,text:"Minha comunicação é espontânea e expressiva. Meu corpo traduz com facilidade as ideias e sentimentos que quero transmitir.",color:"Amarelo"},
+  {n:25,text:"Escutar é um desafio para mim, especialmente quando converso com pessoas que considero ter um ritmo mais lento que o meu.",color:"Rosa"},
+  {n:26,text:"Minha memória é excelente para armazenar dados e informações do mundo físico: visão, audição, tato, paladar e olfato.",color:"Verde"},
+  {n:27,text:"Preciso que as minhas ideias sejam confrontadas. Diálogos que desafiem e expandam meus pensamentos me energizam.",color:"Rosa"},
+  {n:28,text:"Todas as minhas experiências são personalizadas. Cada pessoa é única e consigo lidar com as individualidades de cada um.",color:"Amarelo"},
+  {n:29,text:"Tenho potencial de liderança, mas assumir funções de liderança pode ser difícil pois naturalmente não me exponho com facilidade.",color:"Verde"},
+  {n:30,text:"Quando tomo uma decisão, não demora muito para me arrepender. Acabo tendo diversas opiniões sobre o mesmo assunto ao longo do dia.",color:"Amarelo"},
+  {n:31,text:"Gosto de receber, com antecedência e por escrito, o que será discutido em um encontro de trabalho, para me preparar adequadamente.",color:"Branco"},
+  {n:32,text:"Sou de muita intensidade e me confundo com meu trabalho. Muitas vezes as pessoas me consideram workaholic.",color:"Rosa"},
+  {n:33,text:"Sou multitarefa. Consigo falar ou me envolver em outra coisa ao mesmo tempo, sem perder o foco e atenção.",color:"Amarelo"},
+  {n:34,text:"Quando me engajo com um projeto, tenho muita ansiedade para começar, sem precisar de muitos dados ou planejamento. Sigo o método de experimentação.",color:"Rosa"},
+  {n:35,text:"Consigo me lembrar de um fato passado e revivê-lo com a mesma emoção de quando aconteceu. Posso facilmente tender ao ressentimento.",color:"Amarelo"},
+  {n:36,text:"Cuido naturalmente do propósito e do foco das reuniões. Sempre me concentro em quem faz o quê e quando.",color:"Branco"},
+  {n:37,text:"Ao iniciar um trabalho, gosto de ter uma visão geral do assunto. Detalhes demais me irritam.",color:"Rosa"},
+  {n:38,text:"Quando combino um compromisso com alguém, ele continua valendo ao longo do tempo até que as partes formalizem o seu término.",color:"Branco"},
+  {n:39,text:"Meu corpo absorve e armazena tudo, e preciso de um tempo considerável a sós para processar e digerir essas informações e sentimentos.",color:"Verde"},
+  {n:40,text:"Não sou de jogar conversa fora. Prefiro reuniões que tenham um valor importante a ser honrado, em vez de reuniões apenas sociais.",color:"Azul"},
+  {n:41,text:"Não tenho facilidade para expressar meus sentimentos verbalmente. Demonstro amor e cuidado realizando ações concretas pelo bem-estar das pessoas.",color:"Branco"},
+  {n:42,text:"Minha comunicação é interativa, conectando assuntos e temas diversos. Às vezes as pessoas acham que estou perdendo o foco.",color:"Rosa"},
+  {n:43,text:"Diante de uma nova proposta, tenho tendência inicial de dizer não. Meu sim só será dado quando tiver certeza de que posso me comprometer.",color:"Branco"},
+  {n:44,text:"Acho muito prazeroso trocar experiências pessoais com meus amigos, particularmente para explicitar meus sentimentos e emoções.",color:"Amarelo"},
+  {n:45,text:"Tenho dificuldade de me aproximar de pessoas e grupos sem que haja um objetivo muito claro. Não gosto de me expor sem necessidade.",color:"Azul"},
+  {n:46,text:"Posso ser considerado(a) lento(a) nas decisões quando, na verdade, tenho um processamento mais longo. Minha decisão tende a ser definitiva e muito embasada.",color:"Verde"},
+  {n:47,text:"Consigo permanecer sem apego àquilo que faço, sem necessidade de envolvimento emocional ou físico em relação às tarefas.",color:"Azul"},
+  {n:48,text:"Eu não sei se penso os meus sentimentos ou se sinto os meus pensamentos.",color:"Rosa"},
+  {n:49,text:"Quando alguém me questiona, preciso de um tempo para refletir antes de me posicionar. Às vezes preciso de horas ou dias para chegar à minha conclusão.",color:"Verde"},
+  {n:50,text:"Gosto de usar minha rede de contatos para gerar conexões entre pessoas, mobilizando-as em direção a um resultado comum.",color:"Amarelo"},
+  {n:51,text:"Se as pessoas me pedem uma resposta animada sobre algo, podem se frustrar comigo, pois minha neutralidade pode ser mal interpretada.",color:"Azul"},
+  {n:52,text:"Meu processo natural é baseado em tentativa e erro, e tenho alta resiliência com relação aos riscos envolvidos.",color:"Rosa"},
+  {n:53,text:"Se me confrontam verbalmente, posso dizer sim ou me fechar, sem que isso implique necessariamente que concordei. Talvez meu corpo diga algo sobre meu desacordo.",color:"Verde"},
+  {n:54,text:"Posso ter dificuldade em dizer ou receber negativas, o que pode gerar em mim uma reação emocional desproporcional.",color:"Amarelo"},
+  {n:55,text:"Algumas pessoas podem achar que dou muita importância aos detalhes. Se pretendo que algo seja bem feito, nada pode ser desconsiderado.",color:"Branco"},
+  {n:56,text:"Tenho facilidade para discutir questões em um campo de ideias abstratas, sem precisar de exemplos concretos.",color:"Azul"},
+  {n:57,text:"Tenho uma tendência natural para identificar padrões. Isso ajuda a criar sínteses, sistemas e métodos para facilitar a ação.",color:"Branco"},
+  {n:58,text:"Posso ser considerado(a) agressivo(a) ou mal-educado(a) quando, na verdade, estou apenas sugerindo ideias com entusiasmo.",color:"Rosa"},
+  {n:59,text:"Dou preferência a realizar tarefas em grupo. É comum eu agendar reuniões com outras pessoas para executá-las.",color:"Amarelo"},
+  {n:60,text:"Consigo lembrar de situações de infância com todos os detalhes físicos do ambiente: cores, texturas, cheiros, sons, paladar, clima, etc.",color:"Verde"},
+];
+
+const profiles = {
+  Amarelo: {
+    label: "Amarelo — Relacional e Expressivo",
+    barColor: "#EF9F27",
+    cardBg: "#FAEEDA",
+    cardBorder: "#EF9F27",
+    cardText: "#633806",
+    desc: "Você é movido pelas relações humanas e pelas emoções. Possui alta empatia, comunicação expressiva e espontânea, e uma tendência natural a conectar pessoas. Seu humor é sensível ao ambiente e às interações, e você valoriza profundamente as experiências pessoais e afetivas."
+  },
+  Verde: {
+    label: "Verde — Analítico e Reflexivo",
+    barColor: "#639922",
+    cardBg: "#EAF3DE",
+    cardBorder: "#639922",
+    cardText: "#27500A",
+    desc: "Você é metódico, profundo e precisa de tempo para processar informações antes de agir. Valoriza o contexto histórico, absorve detalhes com precisão e prefere construir planos sólidos antes de tomar decisões. Seu ritmo de processamento é lento e definitivo."
+  },
+  Azul: {
+    label: "Azul — Lógico e Estratégico",
+    barColor: "#378ADD",
+    cardBg: "#E6F1FB",
+    cardBorder: "#378ADD",
+    cardText: "#0C447C",
+    desc: "Você é racional, imparcial e orientado ao longo prazo. Prefere ambientes estruturados, comunicação objetiva e trabalho independente. Sua estabilidade emocional é uma força, e você tem facilidade para analisar ideias abstratas com neutralidade e precisão."
+  },
+  Rosa: {
+    label: "Rosa — Inovador e Dinâmico",
+    barColor: "#D4537E",
+    cardBg: "#FBEAF0",
+    cardBorder: "#D4537E",
+    cardText: "#72243E",
+    desc: "Você é movido pela ação, pela inovação e pelos desafios. Tem alta energia, aprende pelo método de tentativa e erro, e se engaja intensamente com o que faz. É comunicativo, interativo e prefere uma visão geral antes dos detalhes. A rotina e a mesmice são seus maiores inimigos."
+  },
+  Branco: {
+    label: "Branco — Organizado e Confiável",
+    barColor: "#888780",
+    cardBg: "#F1EFE8",
+    cardBorder: "#888780",
+    cardText: "#2C2C2A",
+    desc: "Você é disciplinado, criterioso e valoriza a confiança construída ao longo do tempo. Planeja antes de agir, cumpre o que promete e espera o mesmo dos outros. Demonstra cuidado por meio de ações concretas e tem uma habilidade natural para identificar padrões e estruturar processos."
+  }
+};
+
+const OPTS = ["Não me identifico","Identifico-me pouco","Identifico-me moderadamente","Identifico-me muito","Identifico-me totalmente"];
+let answers = new Array(60).fill(null);
+let currentPage = 0;
+const totalPages = Math.ceil(questions.length / QUESTIONS_PER_PAGE);
+
+function getPageQuestions() {
+  return questions.slice(currentPage * QUESTIONS_PER_PAGE, (currentPage + 1) * QUESTIONS_PER_PAGE);
+}
+
+function renderQuestions() {
+  const container = document.getElementById('questions-container');
+  const pageQs = getPageQuestions();
+  const start = currentPage * QUESTIONS_PER_PAGE;
+  container.innerHTML = pageQs.map((q, i) => {
+    const idx = start + i;
+    const ans = answers[idx];
+    return `<div class="question-card">
+      <div class="question-number">Questão ${q.n} de 60</div>
+      <div class="question-text">${q.text}</div>
+      <div class="options">
+        ${OPTS.map((o, v) => `<button class="opt-btn${ans===v?' sel-'+v:''}" onclick="selectAnswer(${idx},${v})">${o}</button>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  updateProgress();
+  document.getElementById('unanswered-msg').style.display = 'none';
+  document.getElementById('btn-prev').disabled = currentPage === 0;
+  const isLast = currentPage === totalPages - 1;
+  const btn = document.getElementById('btn-next');
+  btn.textContent = isLast ? 'Ver resultado →' : 'Próxima →';
+  window.scrollTo(0, 0);
+}
+
+function selectAnswer(idx, val) {
+  answers[idx] = val;
+  renderQuestions();
+}
+
+function updateProgress() {
+  const answered = answers.filter(a => a !== null).length;
+  const pct = Math.round((answered / 60) * 100);
+  document.getElementById('prog').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = answered + ' de 60 respondidas';
+}
+
+function changePage(dir) {
+  if (dir === 1) {
+    const start = currentPage * QUESTIONS_PER_PAGE;
+    const pageQs = getPageQuestions();
+    const allAnswered = pageQs.every((_, i) => answers[start + i] !== null);
+    if (!allAnswered) {
+      document.getElementById('unanswered-msg').style.display = 'block';
+      return;
+    }
+    if (currentPage === totalPages - 1) { showResults(); return; }
+    currentPage++;
+  } else {
+    currentPage = Math.max(0, currentPage - 1);
+  }
+  renderQuestions();
+}
+
+function showResults() {
+  const scores = {Amarelo:0,Verde:0,Azul:0,Rosa:0,Branco:0};
+  const counts = {Amarelo:0,Verde:0,Azul:0,Rosa:0,Branco:0};
+  questions.forEach((q, i) => {
+    const val = answers[i];
+    if (val !== null) { scores[q.color] += val; counts[q.color]++; }
+  });
+  const pcts = {};
+  Object.keys(scores).forEach(c => {
+    const max = counts[c] * 4;
+    pcts[c] = max > 0 ? Math.round((scores[c] / max) * 100) : 0;
+  });
+  const dominant = Object.keys(pcts).reduce((a,b) => pcts[a] > pcts[b] ? a : b);
+
+  document.getElementById('quiz-section').style.display = 'none';
+  document.getElementById('result-section').style.display = 'block';
+
+  const order = Object.keys(pcts).sort((a,b) => pcts[b]-pcts[a]);
+  document.getElementById('bars-container').innerHTML = order.map(c => {
+    const p = profiles[c];
+    return `<div class="profile-bar-wrap">
+      <div class="profile-label">
+        <span style="font-weight:500;">${p.label}</span>
+        <span>${pcts[c]}%</span>
+      </div>
+      <div class="profile-bar-bg">
+        <div class="profile-bar" style="width:${pcts[c]}%;background:${p.barColor};"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const dp = profiles[dominant];
+  const card = document.getElementById('dominant-card');
+  card.style.background = dp.cardBg;
+  card.style.borderColor = dp.cardBorder;
+  document.getElementById('dominant-title').style.color = dp.cardText;
+  document.getElementById('dominant-title').textContent = 'Perfil dominante: ' + dp.label;
+  document.getElementById('dominant-desc').style.color = dp.cardText;
+  document.getElementById('dominant-desc').textContent = dp.desc;
+  window.scrollTo(0, 0);
+}
+
+function restart() {
+  answers = new Array(60).fill(null);
+  currentPage = 0;
+  document.getElementById('result-section').style.display = 'none';
+  document.getElementById('quiz-section').style.display = 'block';
+  renderQuestions();
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    alert('Link copiado!');
+  }).catch(() => {
+    prompt('Copie o link abaixo:', window.location.href);
+  });
+}
+
+renderQuestions();
+</script>
+</body>
+</html>
